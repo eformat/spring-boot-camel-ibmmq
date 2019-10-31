@@ -46,6 +46,7 @@ class HelloRouter extends RouteBuilder {
     public void configure() throws Exception {
         // @formatter:off
         from("timer://foo?period=" + appConfig.getTime())
+            .threads(appConfig.getMqPoolMaxConnections())
             .setBody()
             .constant(appConfig.getMessage())
             .setExchangePattern(ExchangePattern.InOnly) // set to InOut for Request/Response

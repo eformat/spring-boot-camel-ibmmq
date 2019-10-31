@@ -33,7 +33,7 @@ camel:
 # spring bean properties
 helloservice:
     message: hello ibmmq!
-    time: 5000
+    time: 2000
     mqHosts: localhost
     mqPort: 1414
     mqQueueManager: QMGR1
@@ -42,3 +42,4 @@ helloservice:
     mqPassword:
     mqQueueType: ibmMq:queue
     mqQueueNameIn: ibmMq:queue:DEV.QUEUE.1
+    mqPoolMaxConnections: 2
