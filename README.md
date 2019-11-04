@@ -93,7 +93,9 @@ Update `context.xml` so that `HOST` maps to OpenShift Service
 Deploy (using s2i build)
 
 ```
-oc new-app registry.access.redhat.com/redhat-openjdk-18/openjdk18-openshift~https://github.com/eformat/spring-boot-camel-ibmmq
+oc new-app registry.access.redhat.com/redhat-openjdk-18/openjdk18-openshift~https://github.com/eformat/spring-boot-camel-ibmmq --strategy=source --build-env MAVEN_MIRROR_URL=http://nexus.nexus.svc.cluster.local:8081/repository/maven-public/
+
+
 ```
 
 Deploy (using docker build and binary app)

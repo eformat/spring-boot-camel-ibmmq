@@ -34,7 +34,7 @@ camel:
 helloservice:
     message: hello ibmmq!
     time: 2000
-    mqHosts: localhost
+    mqHosts: ibmmq-tomcat-ibm-mq
     mqPort: 1414
     mqQueueManager: QMGR1
     mqChannel: DEV.APP.SVRCONN
