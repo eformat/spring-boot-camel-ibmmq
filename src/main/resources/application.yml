@@ -32,14 +32,16 @@ camel:
 
 # spring bean properties
 helloservice:
+    oneway: true
     message: hello ibmmq!
     time: 2000
-    mqHosts: ibmmq-tomcat-ibm-mq
+    mqHosts: localhost #ibmmq-tomcat-ibm-mq
     mqPort: 1414
     mqQueueManager: QMGR1
     mqChannel: DEV.APP.SVRCONN
     mqUsername: app
-    mqPassword:
+    mqPassword: app
     mqQueueType: ibmMq:queue
-    mqQueueNameIn: ibmMq:queue:DEV.QUEUE.1
+    mqQueueNameIn: ibmMq:queue:DEV.QUEUE.1?concurrentConsumers=1
+    mqQueueNameInOut: ibmMq:queue:DEV.QUEUE.1?useMessageIDAsCorrelationID=true&replyTo=DEV.QUEUE.2
     mqPoolMaxConnections: 2

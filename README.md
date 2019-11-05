@@ -1,9 +1,11 @@
 ## spring-boot-camel-ibmmq
 
+#### Send Message
+
 Run IBM MQ
 ```
 docker volume create mqm
-docker run -p1414:1414 -p9443:9443 --env LICENSE=accept --env MQ_QMGR_NAME=QMGR1 --volume mqm:/mnt/mqm ibmcom/mq:9
+docker run -p1414:1414 -p9443:9443 --env LICENSE=accept --env MQ_QMGR_NAME=QMGR1 --env MQ_APP_PASSWORD=app --volume mqm:/mnt/mqm ibmcom/mq:9
 ```
 
 Login IBM MQ WebConsole
@@ -17,7 +19,18 @@ Clone this repo and build, run application
 mvn spring-boot:run
 ``` 
 
-You should see messages appearing on QMGR1 / DEV.QUEUE.1 
+You should see messages appearing on QMGR1 / DEV.QUEUE.1
+
+#### Request / Response
+
+There is an `InOut` (Request/Response) example that can be run by setting
+
+```
+helloservice:
+    oneway: false
+```
+
+This makes Requests on QMGR1 / DEV.QUEUE.1 with ReplyTo on QMGR1 / DEV.QUEUE.2
 
 
 ## Multi-instance Queue Managers
@@ -94,8 +107,6 @@ Deploy (using s2i build)
 
 ```
 oc new-app registry.access.redhat.com/redhat-openjdk-18/openjdk18-openshift~https://github.com/eformat/spring-boot-camel-ibmmq --strategy=source --build-env MAVEN_MIRROR_URL=http://nexus.nexus.svc.cluster.local:8081/repository/maven-public/
-
-
 ```
 
 Deploy (using docker build and binary app)

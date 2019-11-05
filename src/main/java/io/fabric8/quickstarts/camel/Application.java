@@ -13,14 +13,20 @@
  */
 package io.fabric8.quickstarts.camel;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.LoggingLevel;
+import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.stereotype.Component;
+
+import java.time.LocalDate;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * A spring-boot application that includes a Camel route builder to setup the Camel routes
@@ -36,13 +42,13 @@ public class Application {
     }
 }
 
+@ConditionalOnProperty(prefix = "helloservice", name = "oneway", havingValue = "true", matchIfMissing = false)
 @Component
-class HelloRouter extends RouteBuilder {
+class HelloRouterInOnly extends RouteBuilder {
 
     @Autowired
     ApplicationConfigBean appConfig;
 
-    @Override
     public void configure() throws Exception {
         // @formatter:off
         from("timer://foo?period=" + appConfig.getTime())
@@ -53,6 +59,40 @@ class HelloRouter extends RouteBuilder {
             //.setHeader("CamelJmsDestinationName", constant(replyQueueName)) // and set reply queue here
             .to(appConfig.getMqQueueNameIn())
             .log(">>> ${body}");
+        // @formatter:on
+    }
+
+}
+
+@ConditionalOnProperty(prefix = "helloservice", name = "oneway", havingValue = "false", matchIfMissing = false)
+@Component
+class HelloRouterInOut extends RouteBuilder {
+
+    @Autowired
+    ApplicationConfigBean appConfig;
+
+    @Override
+    public void configure() throws Exception {
+
+        from(appConfig.getMqQueueNameIn())
+            .log("Received Request: ${header.JMSCorrelationID} >>> ${body}")
+            .process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        exchange.getIn().setBody("<<< hi from processor!");
+                    }
+            })
+            .end();
+
+        // @formatter:off
+        from("timer://foo?period=" + appConfig.getTime())
+            .threads(appConfig.getMqPoolMaxConnections())
+            .setBody()
+            .constant(appConfig.getMessage())
+            .setExchangePattern(ExchangePattern.InOut) // set to InOut for Request/Response
+            .log("Request: >>> ${body}")
+            .to(appConfig.getMqQueueNameInOut())
+            .log("Received Response: ${header.JMSCorrelationID} ${body}")
+            .end();
         // @formatter:on
     }
 

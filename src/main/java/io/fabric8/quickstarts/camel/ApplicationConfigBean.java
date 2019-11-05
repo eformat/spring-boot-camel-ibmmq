@@ -21,6 +21,7 @@ public class ApplicationConfigBean {
     private int mqConsumerCount;
     private String mqQueueNameIn;
     private int mqPoolMaxConnections;
+    private String mqQueueNameInOut;
 
     public ApplicationConfigBean() {
         // empty
@@ -120,6 +121,14 @@ public class ApplicationConfigBean {
 
     public void setMqPoolMaxConnections(int mqPoolMaxConnections) {
         this.mqPoolMaxConnections = mqPoolMaxConnections;
+    }
+
+    public String getMqQueueNameInOut() {
+        return mqQueueNameInOut;
+    }
+
+    public void setMqQueueNameInOut(String mqQueueNameInOut) {
+        this.mqQueueNameInOut = mqQueueNameInOut;
     }
 
 }
