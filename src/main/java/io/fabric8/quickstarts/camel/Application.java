@@ -42,7 +42,7 @@ public class Application {
     }
 }
 
-@ConditionalOnProperty(prefix = "helloservice", name = "oneway", havingValue = "true", matchIfMissing = false)
+@ConditionalOnProperty(prefix = "helloservice", name = "oneway", havingValue = "true", matchIfMissing = true)
 @Component
 class HelloRouterInOnly extends RouteBuilder {
 
@@ -55,8 +55,7 @@ class HelloRouterInOnly extends RouteBuilder {
             .threads(appConfig.getMqPoolMaxConnections())
             .setBody()
             .constant(appConfig.getMessage())
-            .setExchangePattern(ExchangePattern.InOnly) // set to InOut for Request/Response
-            //.setHeader("CamelJmsDestinationName", constant(replyQueueName)) // and set reply queue here
+            .setExchangePattern(ExchangePattern.InOnly)
             .to(appConfig.getMqQueueNameIn())
             .log(">>> ${body}");
         // @formatter:on
@@ -88,7 +87,7 @@ class HelloRouterInOut extends RouteBuilder {
             .threads(appConfig.getMqPoolMaxConnections())
             .setBody()
             .constant(appConfig.getMessage())
-            .setExchangePattern(ExchangePattern.InOut) // set to InOut for Request/Response
+            .setExchangePattern(ExchangePattern.InOut)
             .log("Request: >>> ${body}")
             .to(appConfig.getMqQueueNameInOut())
             .log("Received Response: ${header.JMSCorrelationID} ${body}")
